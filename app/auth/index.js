@@ -195,7 +195,6 @@ function authenticate() {
     const mysqlUserName = req.body.username;
     const salt = 'DYhG93b0qyJfIxghfgfghhfgwvniR2G0FgaC9mi';
     const mysqlPassword = CryptoJS.SHA1(salt + req.body.password, salt).toString();
-    console.log('reqObj = ', req.body);
     connection.query('SELECT * FROM `users` WHERE `username` = ? and password = ?', [mysqlUserName, mysqlPassword], function (error, results, fields) {
         // error will be an Error if one occurred during the query
         // results will contain the results of the query
@@ -216,7 +215,7 @@ function authenticate() {
                     });
                 }
                 if (userResponse.length == 0) {
-                    const nameArr = (mysqlUserName.replace('.email')).split('@');
+                    const nameArr = (mysqlUserName.replace('.email', '')).split('@');
                     let firstName = '';
                     let lastName = '';
                     if (nameArr.length > 0) {
@@ -229,7 +228,7 @@ function authenticate() {
                     let displayName = firstName[0] + lastName[0];
                     var data = {
                         provider: 'local',
-                        username: mysqlUserName,
+                        username: nameArr.join('.'),
                         email: mysqlUserName,
                         password: req.body.password,
                         firstName: firstName,
